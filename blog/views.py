@@ -27,7 +27,8 @@ def post_new(request):
 			post = form.save(commit=False)
 			#add an author, as we didn't in PostForm
 			post.author = request.user
-			post.published_date = timezone.now()
+			#remove the published_date, so not published straight away
+			#post.published_date = timezone.now()
 			#save the form
 			post.save()
 			#When saved, will be redirected to the detail page for post
@@ -54,3 +55,21 @@ def post_edit(request, pk):
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
     # Using the same template as the create a new post page
+
+def post_draft_list(request):
+	#Take only the unpublished posts, and order by date created
+	posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
+	return render(request, 'blog/post_draft_list.html', {'posts': posts})
+	# Page of draft posts - w/o publication date defined
+
+def post_publish(request, pk):
+	post = get_object_or_404(Post, pk=pk)
+	post.publish()
+	return redirect('blog.views.post_detail', pk=pk)
+	# Page to publish draft posts
+
+def post_remove(request, pk):
+	post = get_object_or_404(Post, pk=pk)
+	post.delete()
+	return redirect('blog.views.post_list')
+	#If a post is deleted, redirect to list of published posts

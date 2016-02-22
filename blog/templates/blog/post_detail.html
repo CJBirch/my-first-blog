@@ -7,11 +7,15 @@
         {% if post.published_date %}  
             <div class="date">
                 {{ post.published_date }}
-                {# Ensures only I can edit a post #}
+                {# Ensures only I can edit/delete a post #}
                 {% if user.is_authenticated %}
                 	<a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                	<a class="btn btn-default" href="{% url 'post_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                 {% endif %}
             </div>
+        {% else %}
+        	{# If there's no pub date, add a publish button, for link from list of draft posts #}
+        	<a class="btn btn-default" href="{% url 'blog.views.post_publish' pk=post.pk %}">Publish</a>
         {% endif %}
         {# Add a button to edit the post, pencil image #}
         <h1>{{ post.title }}</h1>

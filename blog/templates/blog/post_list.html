@@ -9,7 +9,8 @@
         	    <p>published: {{ post.published_date }}</p>
         	</div>
         	<h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-        	<p>{{ post.text|linebreaks }}</p>
+        	{# displays only the first 200 characters of post #}
+        	<p>{{ post.text|truncatechars:200 }}</p>
    		</div>
 	{% endfor %}
 {% endblock %}

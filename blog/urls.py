@@ -6,6 +6,9 @@ urlpatterns = [
 	url(r'^post/(?P<pk>[0-9]+)/$', views.post_detail, name='post_detail'),
 	url(r'^post/new/$', views.post_new, name='post_new'),
 	url(r'^post/(?P<pk>[0-9]+)/edit/$', views.post_edit, name='post_edit'),
+	url(r'^drafts/$', views.post_draft_list, name='post_draft_list'),
+	url(r'^post/(?P<pk>[0-9]+)/publish/$', views.post_publish, name='post_publish'),
+	url(r'^post/(?P<pk>[0-9]+)/remove/$', views.post_remove, name='post_remove'),
 ]
 # ^ -- "the beginning"
 # post/ -- what comes next in the URL
@@ -20,3 +23,6 @@ urlpatterns = [
 #      - Pages for individual posts
 #      - Page for make a new post
 #      - Page to edit existing posts
+#      - Page for list of draft posts (w/o pub date)
+#      - To publish draft post
+#      - To delete a post

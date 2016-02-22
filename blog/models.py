@@ -10,7 +10,8 @@ class Post(models.Model):
 	created_date = models.DateTimeField(default=timezone.now)
 	published_date = models.DateTimeField(blank=True, null=True)
 
-	#Function: publish (within Post)
+	#Function: post.publish, to publish a draft post - when publish 
+	#button is clicked, creates a publication date of now.
 	def publish(self):
 		self.published_date = timezone.now()
 		self.save()
