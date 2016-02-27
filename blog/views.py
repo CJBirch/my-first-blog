@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
-from .models import Post
+from .models import Post, Comment
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm
+from .forms import PostForm, CommentForm
+from django.contrib.auth.decorators import login_required
 
 # Create views (pages) here.
 
@@ -16,6 +17,7 @@ def post_detail(request, pk):
     return render(request, 'blog/post_detail.html', {'post': post})
     # http://127.0.0.1:8000/post/pk/ will retrun the full text of a post
 
+@login_required
 def post_new(request):
 	#Once a post is submitted, will be displayed in the form
 	#If method is POST - if there is information saved in the form
@@ -39,6 +41,7 @@ def post_new(request):
 	return render(request, 'blog/post_edit.html', {'form': form})
     # To create a new Post form, call PostForm() and pass it to the template
 
+@login_required
 def post_edit(request, pk):
 	#Extract the post model we want to edit
     post = get_object_or_404(Post, pk=pk)
@@ -56,20 +59,52 @@ def post_edit(request, pk):
     return render(request, 'blog/post_edit.html', {'form': form})
     # Using the same template as the create a new post page
 
+@login_required
 def post_draft_list(request):
 	#Take only the unpublished posts, and order by date created
 	posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
 	return render(request, 'blog/post_draft_list.html', {'posts': posts})
 	# Page of draft posts - w/o publication date defined
 
+@login_required
 def post_publish(request, pk):
 	post = get_object_or_404(Post, pk=pk)
 	post.publish()
 	return redirect('blog.views.post_detail', pk=pk)
 	# Page to publish draft posts
 
+@login_required
 def post_remove(request, pk):
 	post = get_object_or_404(Post, pk=pk)
 	post.delete()
 	return redirect('blog.views.post_list')
 	#If a post is deleted, redirect to list of published posts
+
+def add_comment_to_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('blog.views.post_detail', pk=post.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'blog/add_comment_to_post.html', {'form': form})
+    # Adding a comment to a post
+
+@login_required
+def comment_approve(request, pk):
+	comment = get_object_or_404(Comment, pk=pk)
+	comment.approve()
+	return redirect('blog.views.post_detail', pk=comment.post.pk)
+	# Moderate comments - approve
+
+@login_required
+def comment_remove(request, pk):
+	comment = get_object_or_404(Comment, pk=pk)
+	post_pk = comment.post.pk
+	comment.delete()
+	return redirect('blog.views.post_detail', pk=post_pk)
+	# Moderate comments - delete

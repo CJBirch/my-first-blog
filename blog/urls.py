@@ -9,6 +9,9 @@ urlpatterns = [
 	url(r'^drafts/$', views.post_draft_list, name='post_draft_list'),
 	url(r'^post/(?P<pk>[0-9]+)/publish/$', views.post_publish, name='post_publish'),
 	url(r'^post/(?P<pk>[0-9]+)/remove/$', views.post_remove, name='post_remove'),
+	url(r'^post/(?P<pk>[0-9]+)/comment/$', views.add_comment_to_post, name='add_comment_to_post'),
+	url(r'^comment/(?P<pk>[0-9]+)/approve/$', views.comment_approve, name='comment_approve'),
+	url(r'^comment/(?P<pk>[0-9]+)/remove/$', views.comment_remove, name='comment_remove'),
 ]
 # ^ -- "the beginning"
 # post/ -- what comes next in the URL
@@ -26,3 +29,6 @@ urlpatterns = [
 #      - Page for list of draft posts (w/o pub date)
 #      - To publish draft post
 #      - To delete a post
+#      - To add a comment to posts
+#      - To moderate comments - approve
+#      - To moderate comments - remove
